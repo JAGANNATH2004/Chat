@@ -46,7 +46,14 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             text = await websocket.receive_text()
-            if text.strip():
+            if text == "__CLEAR__":
+                messages_history.clear()
+                for conn in list(active_connections):
+                    try:
+                        await conn.send_text("__CLEAR__")
+                    except Exception:
+                        active_connections.discard(conn)
+            elif text.strip():
                 messages_history.append(text)
                 if len(messages_history) > 100:
                     messages_history.pop(0)

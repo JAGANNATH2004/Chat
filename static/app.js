@@ -2,6 +2,7 @@ const messagesContainer = document.getElementById('messages');
 const chatForm = document.getElementById('chatForm');
 const messageInput = document.getElementById('messageInput');
 const statusText = document.getElementById('status');
+const clearBtn = document.getElementById('clearBtn');
 
 let socket = null;
 
@@ -15,7 +16,11 @@ function connect() {
   };
 
   socket.onmessage = (event) => {
-    appendMessage(event.data);
+    if (event.data === '__CLEAR__') {
+      messagesContainer.innerHTML = '';
+    } else {
+      appendMessage(event.data);
+    }
   };
 
   socket.onclose = () => {
@@ -36,6 +41,12 @@ function appendMessage(text) {
   messagesContainer.appendChild(div);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
+clearBtn.addEventListener('click', () => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send('__CLEAR__');
+  }
+});
 
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
