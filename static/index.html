@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Simple Chat</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Simple Chat</h2>
+      <span id="status" class="status">Connecting...</span>
+    </div>
+
+    <div id="messages" class="messages"></div>
+
+    <form id="chatForm" class="input-container">
+      <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" autofocus>
+      <button type="submit" id="sendBtn">Send</button>
+    </form>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
