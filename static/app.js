@@ -2,7 +2,6 @@ const messagesContainer = document.getElementById('messages');
 const chatForm = document.getElementById('chatForm');
 const messageInput = document.getElementById('messageInput');
 const statusText = document.getElementById('status');
-const clearBtn = document.getElementById('clearBtn');
 
 let socket = null;
 
@@ -42,11 +41,23 @@ function appendMessage(text) {
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-clearBtn.addEventListener('click', () => {
+// Global clear function accessible from onclick or event listeners
+window.clearChat = async function () {
+  // 1. Instantly clear messages on the active screen
+  messagesContainer.innerHTML = '';
+
+  // 2. Broadcast clear event via WebSocket to all other devices
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send('__CLEAR__');
   }
-});
+
+  // 3. Guarantee clearing on server via HTTP POST endpoint
+  try {
+    await fetch('/api/clear', { method: 'POST' });
+  } catch (e) {
+    console.error('Error clearing chat:', e);
+  }
+};
 
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();

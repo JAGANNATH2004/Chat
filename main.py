@@ -69,12 +69,29 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception:
         active_connections.discard(websocket)
 
+@app.post("/api/clear")
+async def clear_chat_api():
+    messages_history.clear()
+    for conn in list(active_connections):
+        try:
+            await conn.send_text("__CLEAR__")
+        except Exception:
+            active_connections.discard(conn)
+    return {"status": "cleared"}
+
 os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def get_index():
-    return FileResponse("static/index.html")
+    return FileResponse(
+        "static/index.html",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
+    )
 
 if __name__ == "__main__":
     ip = get_lan_ip()
